@@ -1,0 +1,1277 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Two-level nested gravitation: model, configurations and design decisions</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Two-level nested gravitation: model,
+configurations and design decisions</h1>
+
+
+
+<p>This vignette documents the two-level nested gravitation model added
+in the 0.2.0 development line of <strong>bayesianOU</strong>, the
+comparative experiment configurations, and every design decision taken
+while implementing it (D-IMPL-1 .. D-IMPL-11). The package documents all
+methodological decisions in its reference material on purpose: the
+reader should be able to reconstruct <em>why</em> each modelling choice
+was made, not only <em>what</em> the code does.</p>
+<p>The code chunks are illustrative (<code>eval = FALSE</code>) so the
+vignette builds without a Stan backend; copy them into a session with
+<code>cmdstanr</code> (or <code>rstan</code>) installed to run them.</p>
+<div id="the-economic-question-2.4-anchor" class="section level2">
+<h2>1. The economic question (§2.4 anchor)</h2>
+<p>The substantive target is the gravitation of market prices toward
+prices of production described in §2.4 of <em>Algunas reflexiones sobre
+los precios de producción de Marx</em>. Market prices <code>phi</code>
+revert (pointwise, not uniformly) to a long-run attractor
+<code>Phi</code>, the price of production, which is itself
+<code>Phi = k + K G&#39;</code> (eq. 9): the cost price
+<code>k = c + v</code> plus the total capital advanced <code>K</code>
+times the general profit rate <code>G&#39; = sum(EBO) / sum(K)</code>. The
+package operationalizes this as a <strong>nested Ornstein-Uhlenbeck (OU)
+process</strong>:</p>
+<ul>
+<li><strong>Level 1 (phenomenon).</strong> The market price reverts to
+the <em>latent</em> production price <code>Phi</code> (not to a
+constant), with the aggregate profit rate (TMG) modulating the
+gravitation speed.</li>
+<li><strong>Level 2 (structure).</strong> The latent production price
+has its own, slower OU reverting to a <code>G&#39;</code>-driven mean
+<code>mu</code>. In the Level-3 model (§11) that mean also tracks labour
+values, so prices of production gravitate around values.</li>
+</ul>
+<p>The constructed production-price index enters as a <em>noisy
+measurement</em> of the latent <code>Phi</code>, not as a known
+regressor. We do <strong>not</strong> claim this is the only or the
+first integration of these components; the contribution is the explicit,
+estimable canonization of the nested structure for this class of
+question.</p>
+</div>
+<div id="the-two-level-model" class="section level2">
+<h2>2. The two-level model</h2>
+<p>Per sector <code>s</code>, on the standardized scale,
+Euler-discretized with <code>dt = 1</code>:</p>
+<pre><code>Level 1 (market phi = Yz):
+  dev_{s,t}   = phi_{s,t-1} - Phi_{s,t-1}
+  kappa^m_{s,t} = kappa_cap * inv_logit( kappa_tilde_s + beta1 * zTMG_t )
+  phi_{s,t}   = phi_{s,t-1} + kappa^m_{s,t} ( -dev + a3_s dev^3 ) + gamma COMstd + eps
+  eps ~ Student-t( nu, 0, exp(h_{s,t}/2) )        # SV log-variance h (AR1)
+
+Level 2 (latent production Phi):
+  mu_{s,t}    = m0_s + m1 G&#39;_t
+  Phi_{s,t}   = Phi_{s,t-1} + kappa^p_s ( mu_{s,t} - Phi_{s,t-1} ) + sigma_p eta
+  Phi-anchor:  index_{s,t} ~ Normal( Phi_{s,t}, sigma_phi_meas )</code></pre>
+<p>The reversion speeds are bounded to <code>(0, kappa_cap)</code>
+through a logit link (see D-IMPL-2). The single-level model
+(<code>n_levels = 1</code>) is preserved exactly: the market reverts to
+a constant <code>theta_s</code> with <code>Phi</code> entering as an
+exogenous linear forcing.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">library</span>(bayesianOU)</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="co"># Two-level fit (market phi = Y, constructed production index = X, G&#39; driver):</span></span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">fit_ou_nested</span>(</span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>  <span class="at">Y =</span> Y, <span class="at">X =</span> X, <span class="at">TMG =</span> TMG, <span class="at">COM =</span> COM, <span class="at">CAPITAL_TOTAL =</span> K,</span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a>  <span class="at">n_levels =</span> <span class="dv">2</span>, <span class="at">Gprime =</span> Gprime,</span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a>  <span class="at">theta_separation =</span> <span class="st">&quot;soft&quot;</span>, <span class="at">k_uncertainty =</span> <span class="st">&quot;meas&quot;</span>,</span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a>  <span class="at">chains =</span> <span class="dv">4</span>, <span class="at">iter =</span> <span class="dv">4000</span>, <span class="at">warmup =</span> <span class="dv">2000</span></span>
+<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a>)</span>
+<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a><span class="fu">print</span>(fit)              <span class="co"># separation evidence, reversion-speed ranges, MCMC health</span></span>
+<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a><span class="fu">summary</span>(fit)            <span class="co"># Level-2 parameter table + OOS metrics</span></span>
+<span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a><span class="fu">plot</span>(fit, <span class="at">type =</span> <span class="st">&quot;phi&quot;</span>) <span class="co"># latent production price with credible band</span></span>
+<span id="cb2-13"><a href="#cb2-13" tabindex="-1"></a><span class="fu">plot</span>(fit, <span class="at">type =</span> <span class="st">&quot;mu&quot;</span>)  <span class="co"># G&#39;-driven Level-2 mean trajectory</span></span></code></pre></div>
+</div>
+<div id="single-source-of-truth-and-bit-exact-equivalence-d-impl-1" class="section level2">
+<h2>3. Single source of truth and bit-exact equivalence (D-IMPL-1)</h2>
+<p>The Stan model is a single file,
+<code>inst/stan/ou_nested.stan</code>, covering both modes.
+<code>n_levels = 1</code> reproduces the retired legacy
+<code>ou_nonlinear_tmg.stan</code> <strong>bit-for-bit</strong>. The
+operational definition of “bit-exact” matters:</p>
+<ul>
+<li>We fit the legacy model, then run <code>generate_quantities</code>
+of <em>both</em> the legacy and the unified <code>n_levels = 1</code>
+model over the <strong>same</strong> input draws, and compare
+<code>log_lik</code> cell by cell. Result:
+<code>identical() = TRUE</code>, 0 of 72000 cells differ.</li>
+<li>Comparing instead against the <code>log_lik</code> stored during
+sampling shows a ~5e-8 difference that is <strong>not</strong> an
+algebraic discrepancy but the CSV serialization rounding of cmdstan
+(<code>sig_figs</code>): sampling computes <code>log_lik</code> at full
+precision in memory, while <code>generate_quantities</code> reads the
+draws rounded from CSV. The gq-vs-gq comparison isolates <em>code</em>
+equivalence from the <em>serialization</em> artifact. That is the
+correct notion of bit-exact here.</li>
+</ul>
+<p>The legacy draws, the data and the reference <code>log_lik</code> are
+frozen as fixtures so the guard
+(<code>tests/testthat/test-equivalence.R</code>) stays runnable after
+the legacy file was removed. The same gq-over-frozen-draws design backs
+the per-configuration golden guards of §12.</p>
+</div>
+<div id="stability-i-bounded-reversion-speeds-d-impl-2" class="section level2">
+<h2>4. Stability I: bounded reversion speeds (D-IMPL-2)</h2>
+<p>The first 2-level prototype did not converge (R-hat ~ 17,
+<code>Phi</code> RMSE ~ 1e16) and did not recover parameters.
+<strong>Root cause:</strong> the Euler reversion speeds were unbounded
+(<code>exp</code> link). For <code>dt = 1</code> the AR coefficient of
+the linear part is <code>(1 - kappa)</code>; with
+<code>kappa &gt; 2</code> its modulus exceeds 1 and the OU recursion is
+<strong>explosive</strong>. In single-level mode the data pinned
+<code>kappa ~ 0.4</code>; in 2-level mode the latent <code>Phi</code>
+gave the sampler freedom to explore the explosive region.</p>
+<p><strong>Root-cause fix (not a patch):</strong> in 2-level mode the
+speeds are bounded to <code>(0, kappa_cap)</code> via a logit link, with
+the TMG modulation <em>inside</em> the link, so neither the level nor
+the TMG term can push the speed out of the stable region:</p>
+<pre><code>kappa^m_{s,t} = kappa_cap * inv_logit( kappa_tilde_s + beta1 * zTMG_t )</code></pre>
+<p><code>kappa_cap</code> is configurable; the default <code>2</code>
+admits the full stable region (<code>kappa &lt; 2</code> stable,
+<code>kappa &lt; 1</code> monotone without overshoot). Defaulting to
+<code>2</code> rather than <code>1</code> does <strong>not</strong>
+assume monotone convergence (anti-overreach). The single-level path
+keeps the legacy <code>exp</code> link untouched; the equivalence was
+re-certified after the change.</p>
+</div>
+<div id="stability-ii-the-enriched-level-2-d-impl-9" class="section level2">
+<h2>5. Stability II: the enriched Level 2 (D-IMPL-9)</h2>
+<p>The latent <code>Phi</code> recursion <strong>propagates</strong> the
+state forward (unlike the Level-1 cubic, which acts on the
+<em>observed</em> market price and therefore never diverges). With cubic
+/ stochastic-volatility richness on Level 2, wide random inits and
+warmup exploration can make the latent trajectory explosive (the
+discrete cubic map or an extreme volatility draw). The fix is
+layered:</p>
+<ul>
+<li><strong>Numeric (Stan):</strong> the cubic argument is clamped to
+<code>[-10, 10]</code> before cubing and the Level-2 SV scale to
+<code>[1e-3, 1e1]</code>. Both are inert when the Level-2 switches are
+off, so the canonical Level 2 keeps the exact linear Gaussian OU.</li>
+<li><strong>Numeric (R):</strong> the 2-level fit uses a reduced default
+init radius (<code>0.3</code>) so the latent recursion starts in a
+stable region; warmup then adapts. The single-level keeps the legacy
+random init.</li>
+</ul>
+<p>This is the Level-2 analogue of the D-IMPL-2 reversion-speed
+bound.</p>
+</div>
+<div id="honest-dispatch-and-the-disaggregation-coupling-d-impl-3-d-impl-4" class="section level2">
+<h2>6. Honest dispatch and the disaggregation coupling (D-IMPL-3,
+D-IMPL-4)</h2>
+<p>While the Stan model was incomplete, unrealized options raised a
+clear error instead of being silently ignored (D-IMPL-3): a
+non-canonical <code>level_spec</code> or
+<code>k_uncertainty = &quot;recon&quot;</code> errored until the corresponding
+Stan machinery existed. Both are now realized (§7-§9).</p>
+<p>The disaggregation draws of the market price couple to the OU model
+by <strong>multiple imputation</strong> (D-IMPL-4).
+<code>fit_ou_nested_mi()</code> refits the OU once per imputation and
+combines results two complementary ways:</p>
+<ul>
+<li><strong>Rubin’s rule</strong> for per-parameter summaries: within-
+and between-imputation variance, Barnard-Rubin degrees of freedom,
+t-intervals and the fraction of missing information (FMI).</li>
+<li><strong>Mixture of posteriors</strong> for joint probabilities
+(e.g. <code>P(kappa^m &gt; kappa^p)</code>) and the Rubin-pooled latent
+<code>Phi</code>.</li>
+</ul>
+<p>A documented caveat: the Rubin interval is Normal/t on the natural
+scale, so for boundary-constrained parameters
+(e.g. <code>sigma_Phi</code>) it can graze the boundary; a log-scale
+pooling is a possible refinement. This is a property of Rubin’s rule,
+not a defect of the machinery.</p>
+</div>
+<div id="two-level-diagnostics-d-impl-5-d-impl-6" class="section level2">
+<h2>7. Two-level diagnostics (D-IMPL-5, D-IMPL-6)</h2>
+<p><strong>Out-of-sample (D-IMPL-5).</strong>
+<code>evaluate_oos_nested()</code> differs decisively from the
+single-level recursion: the market reverts to the <em>latent</em>
+<code>Phi</code>, which is itself propagated forward by its own Level-2
+OU toward the <code>G&#39;</code>-driven mean. The market never sees the
+realized future <code>X</code>. Two caveats, identical in spirit to the
+single-level <code>evaluate_oos()</code>: the forecast is conditional on
+the aggregate drivers <code>G&#39;_t</code> and <code>zTMG_t</code>, and it
+uses plug-in posterior medians (it is a mean-equation forecast, not the
+full posterior predictive). <code>diagnostics$oos</code> is populated
+for 2-level fits.</p>
+<p><strong>Level-2 mean trajectory (D-IMPL-6).</strong>
+<code>extract_mu_trajectory()</code> reconstructs
+<code>mu_{s,t} = m0_s + m1 G&#39;_t</code> over the posterior draws (median
++ bands), exposed as <code>fit$mu_path</code>; it is the structural hook
+to the Level 3 of values (§11), where the mean gains the value term
+<code>m_v V_{s,t}</code>. The 2-level result carries the S3 class
+<code>ou_nested_2level</code> at the <strong>top level</strong> (the
+object the user holds), so <code>print</code> / <code>summary</code> /
+<code>plot</code> dispatch naturally; the inner <code>factor_ou</code>
+keeps a plain <code>model</code> string to avoid a duplicate class on a
+nested element.</p>
+</div>
+<div id="reconstruction-with-uncertain-k-d-impl-7" class="section level2">
+<h2>8. Reconstruction with uncertain K (D-IMPL-7)</h2>
+<p><code>k_uncertainty = &quot;recon&quot;</code> realizes eq. 11: the anchor of
+the latent <code>Phi</code> is no longer the fixed constructed index but
+the reconstruction <code>Phi = k + K G&#39;</code> with the total capital
+advanced <code>K</code> treated as uncertain.</p>
+<ul>
+<li><strong>Prior <code>f_Y</code>.</strong>
+<code>K = K_hat * exp(sigma_K * z_K)</code>,
+<code>z_K ~ Normal(0,1)</code>, a non-centered lognormal around the
+point estimate <code>K_hat = CAPITAL_TOTAL</code>. <code>sigma_K</code>
+(<code>priors$sigma_K_recon</code>, default 0.10, ~10% multiplicative
+uncertainty) is a prior input.</li>
+<li><strong>recon nests meas.</strong> The reconstruction is
+standardized with the training mean/sd of the constructed index
+<code>X</code>. Since <code>X = k + K_hat G&#39;</code> by construction, as
+<code>sigma_K -&gt; 0</code> the standardized reconstruction collapses
+exactly onto the <code>&quot;meas&quot;</code> anchor. The two modes are
+contrastable on the <em>same</em> latent OU, differing only in how the
+anchor is formed.</li>
+<li><strong>Consistency guard.</strong> If <code>X</code> departs from
+the deterministic <code>k + K_hat G&#39;</code> (max relative discrepancy
+&gt; 1e-3) a warning fires; recon then does not reduce to meas and the
+user is told.</li>
+<li><strong>No Jacobian (a conscious layered-rigor decision).</strong>
+<code>Phi_anchor_eff ~ Normal(Phi, sigma)</code> with
+<code>Phi_anchor_eff</code> a deterministic function of <code>z_K</code>
+is a hierarchical <em>measurement</em> model (a log-density factor
+coupling two quantities), not a change of variables of the base measure,
+so no Jacobian term is required.</li>
+</ul>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>fit_recon <span class="ot">&lt;-</span> <span class="fu">fit_ou_nested</span>(</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>  <span class="at">Y =</span> Y, <span class="at">X =</span> X, <span class="at">TMG =</span> TMG, <span class="at">COM =</span> COM, <span class="at">CAPITAL_TOTAL =</span> K,</span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>  <span class="at">n_levels =</span> <span class="dv">2</span>, <span class="at">Gprime =</span> Gprime,</span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>  <span class="at">k_uncertainty =</span> <span class="st">&quot;recon&quot;</span>, <span class="at">k_cost =</span> k_cost,   <span class="co"># cost price c + v (raw units)</span></span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>  <span class="at">priors =</span> <span class="fu">list</span>(<span class="at">sigma_K_recon =</span> <span class="fl">0.10</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>)</span></code></pre></div>
+</div>
+<div id="per-level-richness-switches-and-the-comparative-experiment-d-impl-8" class="section level2">
+<h2>9. Per-level richness switches and the comparative experiment
+(D-IMPL-8)</h2>
+<p>Each level toggles four richness dimensions: <code>cubic</code>
+drift, <code>sv</code> (stochastic volatility), <code>student_t</code>
+tails and <code>hierarchy</code> (cross-sector partial pooling),
+materialized as 8 integer Stan flags. <strong>They act only in 2-level
+mode</strong>; the single-level model is always the full legacy Level 1,
+so <code>n_levels = 1</code> is untouched. The
+<strong>canonical</strong> configuration (Level 1 full; Level 2
+cubic/SV/ Student-t off, hierarchy on) reproduces the previous 2-level
+model exactly: the Level-2 richness blocks are length 0 when off.</p>
+<p><code>ou_level_spec()</code> builds the named configurations of the
+comparative experiment:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">ou_level_spec</span>(<span class="st">&quot;canonical&quot;</span>)   <span class="co"># Level 1 full, Level 2 lean (linear Gaussian OU)</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="fu">ou_level_spec</span>(<span class="st">&quot;both_full&quot;</span>)   <span class="co"># both levels full</span></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="fu">ou_level_spec</span>(<span class="st">&quot;both_lean&quot;</span>)   <span class="co"># both levels lean</span></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a><span class="fu">ou_level_spec</span>(<span class="st">&quot;n1_lean&quot;</span>)     <span class="co"># Level 1 lean, Level 2 lean</span></span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="co"># Fit a configuration:</span></span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a>fit_bf <span class="ot">&lt;-</span> <span class="fu">fit_ou_nested</span>(Y, X, TMG, COM, K, <span class="at">n_levels =</span> <span class="dv">2</span>, <span class="at">Gprime =</span> Gprime,</span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a>                        <span class="at">level_spec =</span> <span class="fu">ou_level_spec</span>(<span class="st">&quot;both_full&quot;</span>))</span></code></pre></div>
+<p>The fifth arm of the experiment is the single-level model
+(<code>fit_ou_nested(..., n_levels = 1)</code>). Dispatch is honest: a
+malformed spec, or a lean Level 1 in single-level mode, errors rather
+than being silently ignored. No configuration is claimed uniquely
+correct; the experiment reports which one the data support, by parameter
+recovery and out-of-sample / leave-cluster-out performance.</p>
+</div>
+<div id="exposing-the-level-2-richness-nu_p-and-sigma_pt-d-impl-10" class="section level2">
+<h2>10. Exposing the Level-2 richness: nu_p and sigma_p(t)
+(D-IMPL-10)</h2>
+<p>When the Level-2 richness is on, the latent production price acquires
+its own cubic coefficient <code>a3_p</code>, Student-t degrees of
+freedom <code>nu_p</code>, and a time-varying stochastic-volatility
+scale <code>sigma_p(t) = exp(h_p/2)</code>. The summary exposes all
+three, by symmetry with the already-exposed <code>a3_p</code> and
+because a <code>both_full</code> fit whose Level-2 tail and volatility
+parameters were hidden would be uninterpretable (the maximum-robustness
+criterion). The quantities are derived from the posterior draws
+(<code>nu_p = 2 + nu_p_tilde</code>;
+<code>sigma_p(t) = exp(h_p/2)</code>), so <strong>no Stan-side change
+was needed</strong> and the bit-exact n = 1 path is untouched. They are
+<code>NULL</code> when the corresponding switch is off, leaving the
+canonical summary unchanged.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>s <span class="ot">&lt;-</span> <span class="fu">summary</span>(fit_bf)</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>s<span class="sc">$</span>level2_table          <span class="co"># now includes a3_p and nu_p rows when present</span></span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>s<span class="sc">$</span>sigma_p_t             <span class="co"># time-varying Level-2 SV scale (median + bands), or NULL</span></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a><span class="fu">plot</span>(fit_bf, <span class="at">type =</span> <span class="st">&quot;sv_p&quot;</span>)   <span class="co"># sigma_p(t) with credible band (when l2_sv is on)</span></span></code></pre></div>
+</div>
+<div id="level-3-prices-of-production-gravitate-around-values-d-impl-9.4-d-impl-10.1-d-impl-11" class="section level2">
+<h2>11. Level 3: prices of production gravitate around values
+(D-IMPL-9.4, D-IMPL-10.1, D-IMPL-11)</h2>
+<p>The nested cascade extends to a third level
+(<code>n_levels = 3</code>). The latent production price now reverts
+toward a mean that also tracks the <strong>value</strong> index
+<code>V</code> (the direct price <code>c + v + p</code>), so the
+production prices gravitate around values (Marx, <em>Capital</em> III
+ch. IX): <code>mu_{s,t} = m0_s + m1 G&#39;_t + m_v V_{s,t}</code>.</p>
+<ul>
+<li><strong>Value as a datum, never simultaneous.</strong>
+<code>V</code> is supplied through the <code>V_value</code> argument (T
+x S) and built by <strong>direct empirical construction</strong>,
+<code>V = k_cost + EBO</code> (<code>= DirectPrices_Index</code>). It is
+a measured anchor, not the solution of a value system: there is
+<strong>no Leontief inverse and no simultaneist algebra</strong>. The
+model standardizes <code>V</code> column-wise on the training window, so
+the coupling <code>m_v</code> is a dimensionless slope.</li>
+<li><strong>Falsifiable coupling.</strong>
+<code>m_v ~ Normal(0, 0.5)</code> is neutral; the ch. IX hypothesis
+<code>m_v &gt; 0</code> is adjudicated by the data, not imposed (the
+same anti-overreach stance as the soft <code>kappa^m &gt; kappa^p</code>
+separation). On the real 37-sector panel the posterior is
+<code>m_v ~ 1.01</code> with <code>P(m_v &gt; 0) = 1</code>: production
+prices track values almost one-to-one in standardized units (the
+empirical content of the transformation problem), a result
+<em>found</em>, not assumed.</li>
+<li><strong>Root over symptom (D-IMPL-9.4).</strong> Level 3 is fitted
+in the K-deterministic mode with the anchor measurement SD held FIXED
+(<code>sigma_phi_meas_fixed = 0.05</code>) rather than estimated. In the
+deterministic limit the estimated SD piled against its lower bound 0 (a
+boundary funnel); fixing it is the <code>sigma_meas -&gt; 0</code> limit
+done well and removes the funnel (on the panel: <code>rhat_max</code>
+2.208 -&gt; 1.079, E-BFMI ~0.02 -&gt; ~1.0). The estimated mode is kept
+for the K-stochastic / recon anchor (§8).</li>
+<li><strong>A refactor, not a parallel model.</strong> The Stan Level-2
+gates were widened from <code>== 2</code> to <code>&gt;= 2</code> so
+<code>n_levels = 3</code> inherits the whole latent machinery; the only
+<code>n_levels == 3</code> addition is the value term.
+<code>n_levels</code> in {1,2} is byte-for-byte unchanged (equivalence
+and all goldens re-certified, plus a <code>level3</code> golden).</li>
+<li><strong>Honest caveat.</strong> At <code>n_levels = 3</code> the
+joint <code>kappa^m &gt; kappa^p</code> separation collapses: once the
+value term absorbs the production mean, <code>kappa^p</code> is
+re-identified and its meaning changes. This is a substantive shift to
+interpret, not a convergence regression.</li>
+</ul>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="co"># Level-3 fit: production gravitates around the value anchor V = k_cost + EBO.</span></span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>fit3 <span class="ot">&lt;-</span> <span class="fu">fit_ou_nested</span>(</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>  <span class="at">Y =</span> Y, <span class="at">X =</span> X, <span class="at">TMG =</span> TMG, <span class="at">COM =</span> COM, <span class="at">CAPITAL_TOTAL =</span> K,</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>  <span class="at">n_levels =</span> <span class="dv">3</span>, <span class="at">Gprime =</span> Gprime,</span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>  <span class="at">V_value =</span> k_cost <span class="sc">+</span> EBO,          <span class="co"># direct price c + v + p (DIRECT construction)</span></span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>  <span class="at">sigma_phi_meas_fixed =</span> <span class="fl">0.05</span>      <span class="co"># K-deterministic anchor (D-IMPL-9.4)</span></span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>)</span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a><span class="fu">summary</span>(fit3)<span class="sc">$</span>level2_table         <span class="co"># now carries the m_v row (value coupling)</span></span></code></pre></div>
+<p><strong>Multiple imputation and out-of-sample at Level 3
+(D-IMPL-11).</strong> The disaggregation coupling (§6) and the
+out-of-sample recursion (§7) both extend to the value model.
+<code>fit_ou_nested_mi()</code> accepts <code>n_levels = 3</code> with
+the same <code>V_value</code> anchor (which, like <code>X</code>,
+<code>CAPITAL_TOTAL</code> and <code>COM</code>, may be either a fixed
+matrix or supplied per imputation under the unified external multiple
+imputation, D-IMPL-13.5/14.1); it adds the coupling <code>m_v</code> to
+the Rubin-pooled set, and the latent-<code>Phi</code> pooling and the
+separation evidence now apply to <code>n_levels &gt;= 2</code>.
+<code>evaluate_oos_nested()</code> gains the value term in its Level-2
+attractor (a <code>V_z</code> argument plus an <code>m_v</code> median),
+so the held-out forecast for a 3-level fit reverts to
+<code>m0 + m1 G&#39; + m_v V</code> rather than the plain Level-2 mean. Both
+extensions are gated and additive: with no value anchor the behaviour is
+byte-identical to the 2-level case.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>mi3 <span class="ot">&lt;-</span> <span class="fu">fit_ou_nested_mi</span>(</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>  <span class="at">phi_draws =</span> phi_draws, <span class="at">X =</span> X, <span class="at">TMG =</span> TMG, <span class="at">COM =</span> COM, <span class="at">CAPITAL_TOTAL =</span> K,</span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>  <span class="at">Gprime =</span> Gprime, <span class="at">V_value =</span> k_cost <span class="sc">+</span> EBO, <span class="at">n_levels =</span> <span class="dv">3</span>, <span class="at">M =</span> <span class="dv">25</span>,</span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>  <span class="at">sigma_phi_meas_fixed =</span> <span class="fl">0.05</span></span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>)</span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>mi3<span class="sc">$</span>rubin[mi3<span class="sc">$</span>rubin<span class="sc">$</span>parameter <span class="sc">==</span> <span class="st">&quot;m_v&quot;</span>, ]   <span class="co"># Rubin-pooled value coupling</span></span></code></pre></div>
+<p><strong>Richer value dynamics (deferred).</strong> Whether
+<code>V</code> should itself be a fourth latent state with its own OU
+and measurement (symmetric to <code>Phi</code>), instead of an observed
+anchor, is an open design question deferred to the user (D-8.7). The
+canonical minimal version implemented here is <code>V</code> observed;
+the latent-<code>V</code> variant is recorded as canonized debt, not
+built.</p>
+<p><strong>The definitive run (<code>sigma = 0.05</code> arm).</strong>
+The canonical empirical result is the unified external-MI fit on the
+37-sector x 61-year US panel (<code>n_levels = 3</code>,
+K-deterministic, <code>M = 25</code>, 4 chains x 3500 post-warmup draws,
+<code>adapt_delta = 0.97</code>). It clears an impeccable per-imputation
+gate — pooled <code>rhat_max &lt; 1.01</code> (max 1.006), bulk/tail ESS
+<code>&gt;= 1000</code> (min 1918 / 3105), and <strong>zero
+divergences</strong> after a single-imputation top-up at
+<code>adapt_delta = 0.99</code> removed the lone divergent transition in
+one of the 25 fits (the other 24 contributions bit-identical, so the
+pooled estimates move only in the 4th-7th decimal). The value coupling
+is <code>m_v = 1.0136</code>, 95% CI <code>[1.0096, 1.0176]</code>,
+<code>P(m_v &gt; 0) = 1</code>, <code>fmi = 0.37</code>: prices of
+production track values almost one-to-one in standardized units, with
+the external value/capital uncertainty genuinely propagated (the
+<code>fmi &gt; 0</code> certifies the multiple imputation is doing work
+— under a single deterministic anchor it was 0).</p>
+<ul>
+<li><p><strong>Weighting is by value added, a declared double
+proxy.</strong> The hypothesis asks for averages weighted by each
+capital’s share in total social capital (in modern terms, gross
+investment by branch), not simple averages. Empirically that share
+cannot be measured by its ideal referent: for the US (BEA)
+<strong>neither gross investment nor the capital stock</strong> exists
+disaggregated by branch. The national totals are therefore allocated to
+industries by <strong>value-added (VAB) share</strong> for the
+value-bearing flows — compensation <code>v</code> and operating surplus
+<code>p</code> (imputed 1960-1996; direct from the Use tables 1997-2020)
+— and by <strong>intermediate-consumption (CI) share</strong> for the
+constant-capital stocks — fixed-capital consumption and non-financial
+assets (whole span). The effective weighting key is thus VAB (and CI): a
+<em>declared</em> double proxy for social-capital participation, not the
+capital stock and not investment flow. The aggregate <code>G&#39;</code> in
+<code>Phi = k + K G&#39;</code> is correspondingly the VAB-weighted average
+rate of profit. (Source:
+<code>Documentacion_Excel_Tasa_Media_Ganancia_Nov22</code>.)</p></li>
+<li><p><strong>The <code>sigma</code> arm is a regularizer, and the
+sweep confirms robustness.</strong> <code>sigma_phi_meas = 0.05</code>
+is a <em>declared latency regularizer</em>, not a data-calibrated
+magnitude (under external MI there is no measurement residual left to
+calibrate). Its influence was assessed by a full sensitivity sweep
+<code>sigma in {0.02, 0.05, 0.10}</code> at the same base seed (15000);
+all three arms clear the impeccable gate (0 divergences each). The
+load-bearing conclusions are <strong>invariant</strong> to the
+regularizer:</p>
+<table style="width:100%;">
+<colgroup>
+<col width="12%" />
+<col width="10%" />
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="right"><code>sigma</code></th>
+<th align="right"><code>m_v</code></th>
+<th align="right">median <code>kappa_m</code></th>
+<th align="right">market half-life</th>
+<th align="right">median <code>kappa_p</code></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">0.02</td>
+<td align="right">1.0138</td>
+<td align="right">0.0986</td>
+<td align="right">9.0 yr</td>
+<td align="right">0.864</td>
+</tr>
+<tr class="even">
+<td align="right">0.05</td>
+<td align="right">1.0136</td>
+<td align="right">0.0977</td>
+<td align="right">9.0 yr</td>
+<td align="right">0.888</td>
+</tr>
+<tr class="odd">
+<td align="right">0.10</td>
+<td align="right">1.0126</td>
+<td align="right">0.0970</td>
+<td align="right">9.0 yr</td>
+<td align="right">0.935</td>
+</tr>
+</tbody>
+</table>
+<p><code>m_v ~ 1.013</code> (spread 0.001) and the market half-life (9.0
+years, with near-identical sector ranges) are essentially unchanged
+across the sweep. The only <code>sigma</code>-sensitive quantity is the
+<em>magnitude</em> of <code>kappa_p</code>, which rises monotonically
+with <code>sigma</code> (a looser regularizer lets the latent
+<code>Phi</code> float, so it re-anchors to value faster) but stays in
+the same fast regime — consistent with <code>kappa_p</code> being the
+re-identified, caveated parameter (D-IMPL-10.1). The sweep therefore
+<em>robustifies</em> the anchor rather than qualifying it.</p></li>
+</ul>
+</div>
+<div id="the-wedge-why-the-value-coupling-is-not-spurious-correlation-d-s12.3" class="section level2">
+<h2>12. The wedge: why the value coupling is not spurious correlation
+(D-S12.3)</h2>
+<p>The Level-3 result <code>m_v ~ 1</code> is measured on standardized
+<strong>levels</strong>, and the production index
+<code>Phi = k + K G&#39;</code> shares the cost price <code>k = c + v</code>
+with the value index <code>V = k + p</code>. A mainstream critic can
+object that the two series move together because they are <em>the same
+accounting</em>. The objection is valid for the shared level — and only
+there. The Marxian content lives elsewhere, and the defence is to move
+the evidence onto a quantity the construction does <strong>not</strong>
+predetermine.</p>
+<ul>
+<li><strong>The wedge is construction-orthogonal.</strong> Subtracting
+the two series cancels the shared <code>k</code>:
+<code>W_i = Phi_i - V_i = (k_i + K_i G&#39;) - (k_i + p_i) = K_i G&#39; - p_i</code>.
+What remains is purely the redistribution of the transformation — the
+uniform profit mark-up on advanced capital minus the sector’s own
+surplus — and, since <code>G&#39; = sum(p) / sum(K)</code>, it sums to zero
+across sectors by construction:
+<code>sum_i W_i = G&#39; sum_i K_i - sum_i p_i = 0</code>. The “spurious”
+part lives entirely in <code>k</code>; the Marxian content lives
+entirely in the zero-sum wedge <code>W</code>.</li>
+<li><strong>Levels are definitional; dynamics are not.</strong>
+Co-movement in levels is not the test (it is, in part, fidelity to a
+precise theoretical definition, not a vice). The genuine test is the
+<em>dynamic behaviour</em> of the wedge and of the market deviation
+<code>phi - V</code>: do they revert and stay bounded rather than
+diverge? No accounting identity implies a reversion speed
+<code>kappa</code>; two series can be definitionally co-moving in levels
+while their deviations do anything (random walk, explosive, white
+noise). The weight of evidence therefore shifts from <code>m_v</code> (a
+level, definitional) to <code>kappa</code>, the out-of-sample recursion
+and the wedge (all construction-orthogonal). See §13.</li>
+<li><strong>Negative controls (placebos).</strong> Build counterfeit
+“values” that respect the same aggregate constraints
+(<code>sum p</code>, <code>G&#39;</code>) but break the sectoral Marxian
+structure, and show that gravitation is weaker or absent for them than
+for the true <code>V</code>.
+<code>convergenceDFM::placebo_values()</code> implements two:
+<code>&quot;uniform&quot;</code> (<code>p = G&#39; K</code>, so <code>V = Phi</code>
+and the wedge is null — the no-redistribution null) and
+<code>&quot;permute&quot;</code> (a seeded derangement that mis-pairs
+<code>K_i</code> with <code>p_i</code> while preserving the yearly
+total). If the genuine sectoral <code>V</code> gravitates better than
+placebos that share all aggregate accounting, the specific Marxian
+structure adds information beyond the shared <code>k</code>.</li>
+<li><strong>The <code>G&#39;</code> anchor is social surplus P, by
+definition.</strong> That <code>G&#39; = sum(P)/sum(K)</code> is anchored in
+total social surplus is the Marxian <em>definition</em> of the general
+rate of profit, not a hypothesis to prove; what is empirical and
+falsifiable is that the production prices built with that
+<code>G&#39;</code> govern the gravitation and that the wedge behaves as
+bounded zero-sum redistribution rather than a diverging gap.</li>
+<li><strong>Why this is not spurious correlation
+(epistemology).</strong> A correlation is spurious when there is (i) no
+genuine causal theory and (ii) confounding. Here it is the opposite:
+there is a rigorous causal theory (Marx) and the shared <code>k</code>
+<em>is the mechanism of that theory</em>, not a confounder — this is
+theory-laden measurement (as measuring kinetic energy two ways and
+finding they agree is internal consistency, not a spurious link). The
+defence is the <em>conjunction</em>: declare the definitional part
+openly (anti-overreach as armour), move the evidence to the
+construction-orthogonal dynamics (wedge, reversion, <code>kappa</code>,
+OOS), add placebos, and lean on the theory’s causal warrant.</li>
+</ul>
+<p><strong>Diagnostics and the empirical finding (D-IMPL-13.4).</strong>
+The wedge tools live in <code>convergenceDFM</code>:
+<code>compute_wedge(K, Gprime, p)</code> (with a per-year zero-sum
+check), <code>wedge_stationarity(W)</code> (per-sector AR(1) half-life +
+ADF, panel summary, with no single fabricated panel p-value), and
+<code>placebo_values()</code>. On the corrected real panel the wedge
+sums to zero (<code>~2e-16</code>), its magnitude <code>|W|/Phi</code>
+has median <code>~6%</code>, and it is highly persistent
+(<code>rho ~ 0.96</code>, half-life <code>~10-16 years</code>; ADF
+rejects a unit root in only 1/37 sectors). A 200-draw permutation
+placebo does <strong>not</strong> separate from the true wedge
+(empirical <code>p ~ 0.65</code>). Read honestly (anti-overreach,
+exactly as expected): with 61 annual observations and decade-scale
+half-lives a univariate unit-root test is structurally underpowered —
+the <strong>low-<code>kappa</code> trap</strong> (§13) made visible. The
+wedge does its primary job (a construction-orthogonal, zero-sum,
+pointwise-bounded quantity that disarms the spuriousness charge) and
+exposes, without cosmetics, where univariate data cannot decide; the
+dynamic discrimination is then carried by the OU posterior of
+<code>kappa</code> (pooled, prior- informed, more powerful than ADF) and
+by out-of-sample forecasting.</p>
+<p><strong>Definitive run (<code>sigma = 0.05</code>).</strong> On the
+definitive unified-MI panel the wedge sums to zero to machine precision
+(<code>max|sum_i W_i| = 4.6e-10</code>), its magnitude
+<code>|W|/Phi</code> has median <strong>6.1%</strong>, and it is highly
+persistent: AR(1) <code>rho = 0.958</code>, central half-life
+<strong>9.6 years</strong>, and a per-imputation half-life of
+<strong>9.5 years</strong> <code>[8.3, 11.4]</code> across the 25
+imputations. The univariate ADF rejects a unit root in only
+<strong>1/37</strong> sectors and a 200-draw permutation placebo does
+not separate from the true wedge (empirical <code>p = 0.65</code>) — the
+low-<code>kappa</code> trap (§13) made visible, exactly as anticipated,
+not a failure of the construction. The wedge’s decade-scale persistence
+coincides with the market half-life (§13): the characteristic deviation
+time-scale of the system is roughly a decade, coherent across
+levels.</p>
+</div>
+<div id="the-reversion-speed-kappa-interpretive-framework-d-s12.4" class="section level2">
+<h2>13. The reversion speed kappa: interpretive framework (D-S12.4)</h2>
+<p>The substantive claim “prices gravitate” is the claim
+<code>kappa &gt; 0</code>; its <em>speed</em> is secondary.</p>
+<ul>
+<li><strong>Existence is the cornerstone; magnitude is
+secondary.</strong> In an OU process any <code>kappa &gt; 0</code> is
+convergence: stationary, with finite stationary variance
+<code>sigma^2 / (2 kappa)</code> and half-life
+<code>(ln 2) / kappa</code>. <code>kappa = 0</code> is a random walk;
+<code>kappa &lt; 0</code> explodes. A <em>slow</em> gravitation is not
+weak evidence — it is what the theory predicts (secular, slow
+gravitation of market prices around prices of production; a fast
+<code>kappa</code> would be suspicious).</li>
+<li><strong><code>P(kappa &gt; 0) = 1</code> is uninformative
+here.</strong> By construction
+<code>kappa = kappa_cap * inv_logit(.)</code> lies in
+<code>(0, kappa_cap)</code>, so the sign probability is trivially one.
+The informative per-sector quantity is the <strong>half-life</strong>
+<code>(ln 2) / kappa</code> and whether it exceeds the observed span.
+The mixture-posterior half-life
+(<code>separation_pooled$halflife_*</code> and the thinned
+<code>kappa_mixture</code> from
+<code>fit_ou_nested_mi(..., keep_kappa_mixture = TRUE)</code>) is
+reported in preference to a moment-based delta on <code>kappa</code>,
+because <code>kappa_p</code> piles near its lower boundary precisely in
+the slow regime, where a Gaussian/t approximation is least
+faithful.</li>
+<li><strong>Inferential, not deductive, guarantee.</strong> There is no
+deductive guarantee that the real economy reverts; the conditional “if
+<code>kappa &gt; 0</code> then it converges (ergodicity)” is the
+mathematics, and the data supply an <em>inferential</em> guarantee:
+posterior mass on <code>kappa &gt; 0</code> (here, credible half-lives)
+together with identification.</li>
+<li><strong>The low-<code>kappa</code> trap.</strong> Empirically, with
+61 years, a low <code>kappa &gt; 0</code> becomes indistinguishable from
+<code>kappa = 0</code> (a unit root): a half-life near the sample length
+means the likelihood barely sees one half-life and cannot separate “very
+slow reversion” from “no reversion”. This is why <code>kappa_p</code>
+was weakly identified at <code>n_levels = 2</code>. The credible
+guarantee of <code>kappa &gt; 0</code> can <em>evaporate</em> in the
+slow regime — not because there is no convergence but because the data
+do not resolve it; this threatens the cornerstone itself in that regime
+and is not a side detail.</li>
+<li><strong>Wedge / OOS / placebos carry the claim when
+<code>kappa</code> is soft.</strong> Boundedness and reversion of the
+wedge (§12), out-of-sample forecasting, and placebos give evidence of
+gravitation <em>without</em> requiring <code>kappa</code> to be pinned
+down. They are not decoration: they are the instruments that secure the
+cornerstone when <code>kappa</code> alone is too weakly identified (the
+<code>n=2</code> regime). When <code>kappa</code> is well identified
+(the <code>n=3</code> regime, fast <code>kappa_p</code>),
+<code>kappa</code> suffices on its own.</li>
+<li><strong>Two convergences, kept lexically separate
+(mandatory).</strong> Never conflate (i) the <em>economic</em>
+convergence — gravitation, <code>kappa &gt; 0</code> — with (ii) the
+<em>sampler</em> convergence — <code>rhat &lt; 1.01</code>, the HMC
+mixed well. They are independent: a perfectly mixed sampler can report
+that <code>kappa</code> is credibly <code>~0</code> (no economic
+convergence), and a non-converged sampler says nothing. This vignette
+and the reporting use “gravitation / reversion” for the economics and
+“mixing / sampler convergence” for the MCMC, always.</li>
+<li><strong>What to report per sector.</strong>
+<code>P(kappa^m &gt; kappa^p)</code> (the soft separation, in
+<code>separation_pooled$prob_sep_by_sector</code>), the half-life and
+its interval, and a low-<code>kappa</code>-trap flag (half-life beyond
+the span). Report the <em>sectoral distribution</em>, not only the
+aggregate: the joint <code>kappa^m &gt; kappa^p</code> is an AND over
+all 37 sectors, so a joint near 0 is <strong>not</strong> “no
+separation” but “no longer in every sector simultaneously” — and at
+<code>n_levels = 3</code> the joint typically collapses because the
+value term re-identifies <code>kappa_p</code> (D-IMPL-10.1).</li>
+</ul>
+<p><strong>Definitive run (<code>sigma = 0.05</code>).</strong> Market
+gravitation (<code>kappa^m</code>, market price toward production price)
+has a median half-life of <strong>9.0 years</strong> (sector range
+6.2-17.7); production gravitation (<code>kappa^p</code>, production
+price toward the value-anchored mean) a median of <strong>0.8
+years</strong> — production prices are strongly value-anchored
+(<code>m_v ~ 1</code> <em>and</em> fast reversion), while the market
+gravitates slowly, faithful to Marx’s secular tendency. The joint
+<code>kappa^m &gt; kappa^p</code> is 0 and
+<code>P(kappa^m &gt; kappa^p)</code> is below 0.1 in 36/37 sectors: at
+<code>n_levels = 3</code> the value term re-identifies
+<code>kappa_p</code> upward, so the order is dominated by the fast
+production reversion (read the sectoral distribution, not the collapsed
+joint; the lone exception is Warehousing, <code>P = 0.35</code>, where
+<code>kappa_p ~ kappa_m</code>).</p>
+<p>The low-<code>kappa</code> trap, quantified per sector: by the
+majority-mass criterion <code>P(half-life &gt; horizon) &gt; 0.5</code>
+<strong>no sector is in the trap</strong> (0/37 at both the 42-year
+training and 61-year full horizons, market and production) — the
+hierarchical posterior resolves every sector’s <em>central</em>
+half-life inside the sample, precisely where the univariate ADF (1/37
+rejections, §12) cannot. <strong>But the slow tail is not
+empty:</strong> the slowest sectors (Information,
+<code>kappa^m = 0.039</code>, half-life median 17.7 with q97.5 ~82
+years; Professional/scientific/technical services; Oil &amp; gas;
+Construction) retain non-negligible upper-tail mass beyond the horizon —
+<code>P(half-life &gt; 42) = 0.143</code> for Information, and the
+widest sectoral half-life q97.5 reaches ~290 years. So the median
+gravitation is empirically resolved everywhere, yet for the slowest
+sectors the posterior does not rule out near-unit-root behaviour: that
+residual 10-14% upper-tail mass <em>is</em> the trap, now measured
+rather than asserted. This is exactly why the cornerstone leans on the
+pooled <code>kappa</code> posterior together with the wedge and OOS,
+never on a univariate stationarity test. <em>(These figures are the
+central <code>sigma = 0.05</code> arm; the
+<code>sigma in {0.02, 0.10}</code> arms reproduce them — median market
+half-life 9.0 years in all three — so the trap structure is robust to
+the regularizer; see the sweep table in §11.)</em></p>
+</div>
+<div id="validation" class="section level2">
+<h2>14. Validation</h2>
+<p>The package follows a layered validation standard (algebraic /
+statistical / numeric, kept separate):</p>
+<ul>
+<li><strong>Bit-exact equivalence</strong> of the single-level mode
+(§3), frozen as a fixture.</li>
+<li><strong>Per-configuration parameter recovery.</strong> Each
+configuration is simulated from its own generative process (the richness
+switches turn the corresponding terms on/off) and fit; the structurally
+identifiable Level-2 parameters (<code>kappa_p</code>,
+<code>kappa_m_base</code>, <code>m1</code>) are checked for 90%
+credible-interval coverage, and the latent <code>Phi</code> for
+correlation with the truth. The script is
+<code>validacion/recovery_by_config.R</code>; the gated regression test
+is <code>tests/testthat/test-recovery-by-config.R</code> (set
+<code>BAYESOU_RUN_RECOVERY_CONFIG=1</code>). The Student-t
+<code>nu</code> and the SV scale are weakly identified when stochastic
+volatility is present (the prior dominates) and are deliberately
+excluded from the coverage assertion.</li>
+<li><strong>LOO discrimination.</strong> On the canonical dataset, which
+is adversarial for the single-level model (the market reverts to a
+latent <code>Phi</code> that wanders with a strong
+<code>G&#39;</code>-driven mean while the index is only a noisy
+measurement), PSIS-LOO prefers the 2-level model. We report the
+comparison and its standard error rather than over-claiming a universal
+ranking: on real, weakly separated data competing specifications are
+often statistically indistinguishable in <code>elpd</code>.</li>
+<li><strong>Per-configuration golden guards.</strong> For each
+configuration a golden fixture freezes draws + data + reference
+<code>log_lik</code>; the permanent test
+(<code>tests/testthat/test-golden-configs.R</code>) recomputes
+<code>log_lik</code> via <code>generate_quantities</code> and asserts a
+bit-for-bit match. Regenerate with
+<code>validacion/make_golden_configs.R</code>.</li>
+</ul>
+</div>
+<div id="caveats-anti-overreach" class="section level2">
+<h2>15. Caveats (anti-overreach)</h2>
+<ul>
+<li>The cubic restoring <code>a3 &lt; 0</code> is a <strong>stability
+assumption</strong>, not an estimated result; it precludes detecting
+locally self-amplifying regimes.</li>
+<li>PSIS-LOO with one latent SV state per observation tends to be
+optimistic and to produce high Pareto-k; <code>validate_ou_fit()</code>
+surfaces and warns on it, and the leave-cluster-out design (in the
+companion <code>convergenceDFM</code>) is the robustness answer under
+cross-sectional dependence. “Surviving leave-cluster-out” means
+predictive robustness under dependence, not a topological
+invariant.</li>
+<li>Forecast metrics are conditional on the aggregate drivers and use
+plug-in medians (§7).</li>
+<li>The reported empirical numbers (§11-§13) are the central
+<code>sigma_phi_meas = 0.05</code> arm, a <em>declared latency
+regularizer</em> rather than a calibrated magnitude. The full
+<code>sigma in {0.02, 0.05, 0.10}</code> sweep (all gate-clean) confirms
+the conclusions are robust to it: <code>m_v ~ 1.013</code> and the
+9.0-year market half-life are invariant across arms, with only the
+magnitude of <code>kappa_p</code> mildly <code>sigma</code>-dependent
+(sweep table, §11).</li>
+<li>Sectoral allocation uses VAB (value-added) and CI
+(intermediate-consumption) shares as a declared double proxy for
+social-capital participation, because neither gross investment nor the
+capital stock exists disaggregated by branch for the panel (§11).
+Weighting-key sensitivity is a structural limitation of the data, not of
+the method.</li>
+</ul>
+</div>
+<div id="block-9-validation-internal-external-and-simulation-based-calibration" class="section level2">
+<h2>16. Block 9 validation: internal, external, and simulation-based
+calibration</h2>
+<p>A full validation block was run on the canonical K-deterministic
+variant (<code>sigma = 0.05</code> arm), in the order internal -&gt;
+external -&gt; SBC. Throughout, the <em>economic</em> convergence
+(gravitation: <code>kappa</code>, half-life) and the <em>sampler</em>
+convergence (R-hat, divergences, ESS) are kept lexically distinct, and
+the verdict is prepared, anti-overreach, for the likely case that the
+hierarchical model does not dominate simpler rivals predictively.</p>
+<p><strong>Internal (synthetic, known truth).</strong></p>
+<ul>
+<li><strong>I1 – recovery and coverage (<code>n = 3</code>).</strong>
+Panels are simulated from the three-level law with known
+<code>(kappa_m, kappa_p, m1, m_v)</code> (fresh truth + data per
+replicate, over the realistic parameter region), fit via the direct-Stan
+path (truths kept literal, no re-standardization), and judged by 90%
+credible-interval coverage. Over 105 replicates (S=8 plus S=37 at the
+real dimension) the pooled coverage is <strong>0.91</strong>
+(<code>kappa_p</code>, <code>kappa_m_base</code>, <code>m1</code>,
+<code>m_v</code> all near the nominal 0.90), <code>corr(Phi)</code> ~
+0.999, R-hat &lt; 1.007. The <code>m_v</code> interval <strong>widens
+honestly</strong> from a strong value anchor (width ~0.074) to a weak
+one (~0.131): the model does not fabricate precision when the value
+signal is weak. A handful of divergences across ~100 fits is a per-fit
+rate diagnostic, not a hard zero (the empirical coverage itself rules
+out posterior bias).</li>
+<li><strong>I2 – adversarial negative controls.</strong> (a) A unit-root
+DGP (<code>kappa -&gt; 0</code>): the posterior reports a ~50-year
+half-life and only ~5% of null sectors reach the real-data 9-year
+half-life – the pipeline does <strong>not</strong> manufacture fast
+gravitation from a random walk. (b) An <code>m_v = 0</code> DGP with a
+persistent value regressor present: the posterior of <code>m_v</code>
+covers 0 (no hallucinated value anchoring). Coverage of a near-boundary
+<code>kappa</code> is not the right metric (a bounded parameter’s
+credible interval departs from nominal at the boundary by construction);
+the substantive anti-false-positive criterion is the one reported.</li>
+<li><strong>I1b – multiple-imputation coverage and a disaggregation
+caveat.</strong> Routing proper imputations (from the conjugate
+disaggregation smoother) through Rubin’s rules propagates construction
+uncertainty into the OU intervals (fraction of missing information ~0.4
+on the real run). A controlled study of the identification quality shows
+the disaggregation of one aggregate into many sectors is
+under-determined and <strong>biases <code>kappa_m</code> toward
+slowness</strong>; at the real operating point (between-imputation
+correlation ~0.78) the bias is a modest ~13-26% and <code>kappa_m</code>
+coverage stays near nominal (~0.79). The bias direction is
+<strong>conservative</strong>: the true gravitation is at-least-as-fast
+as the reported 9-year half-life (likely ~7-8 years), within the same
+slow regime.</li>
+<li><strong>I3 – simulation-based calibration (SBC).</strong> Drawing
+truths from the model’s exact priors, simulating from the prior
+predictive, fitting, and ranking the truth within the posterior should
+yield <strong>uniform ranks</strong> if the posterior computation is
+correct (Talts et al. 2018). Over R = 500 (91% converged) the ranks are
+uniform for <code>kappa_m</code>, <code>kappa_p</code>,
+<code>m_v</code>, <code>m1</code>. SBC is run on the exactly-simulatable
+linear core (Level-1 OU + stochastic volatility + Student-t + hierarchy
++ Level-2 + value): the cubic restoring term is <strong>not</strong>
+exactly forward-simulatable (the unclamped <code>dev^3</code> of the
+likelihood explodes a forward recursion), so its SBC is infeasible;
+since on real data <code>a3 ~ -0.047</code> sits essentially at its
+prior, the cubic is a minor refinement, and its <code>kappa_m</code>
+calibration is the one I1 certifies.</li>
+</ul>
+<p><strong>External (real BEA panel, vs legitimate rivals).</strong></p>
+<ul>
+<li><strong>E1 – held-out decade (2011-2020) forecast</strong> of the
+market price, OU vs random walk / per-sector AR(1) / the
+<code>kappa = 0</code> (no-gravitation) restriction, with RMSE, Gaussian
+log-score, and an honest paired standard error. Across panels the
+<strong>random walk beats the OU</strong>, and the
+<code>kappa = 0</code> restriction beats or ties it; the OU only
+outperforms the flat AR(1). The nested gravitation does
+<strong>not</strong> improve out-of-sample forecasting.</li>
+<li><strong>E2 – PSIS-LOO across model depth</strong>
+(<code>n = 1, 2, 3</code>). The value term is predictively
+<strong>indistinguishable</strong> (<code>Delta</code>elpd ~ 0.7, se ~
+0.9); PSIS-LOO is unreliable here (high Pareto-k from the latent SV
+state), so it is secondary and the held-out OOS is primary. Consistent
+with E1.</li>
+<li><strong>E3 – wedge placebos</strong> (formalized from
+<code>convergenceDFM</code>). The wedge
+<code>W = Phi - V = K G&#39; - p</code> is zero-sum, bounded and persistent
+(<code>rho ~ 0.96</code>, half-life ~9.6 y), but permutation placebos
+that preserve all aggregates are <strong>not</strong> separated by any
+univariate statistic (ADF or reversion-speed). This is the
+low-<code>kappa</code> trap made visible (a near-unit root at T = 61
+leaves the augmented Dickey-Fuller test underpowered), not a model
+failure.</li>
+</ul>
+</div>
+<div id="the-logical-verdict-why-the-negative-external-results-corroborate-the-thesis" class="section level2">
+<h2>17. The logical verdict: why the “negative” external results
+corroborate the thesis</h2>
+<p>The three external nulls (the OU is not a better forecaster; the
+value term adds no predictive density; no univariate test separates the
+wedge) do <strong>not</strong> refute the substantive claims, and the
+argument that they do not is not special pleading:</p>
+<ol style="list-style-type: decimal">
+<li><strong>Two targets, fixed a priori.</strong> The claim is about
+<em>structural</em> parameters – the existence and magnitude of the
+reversion speeds and the value coupling, as properties of the
+data-generating cascade <code>phi -&gt; Phi -&gt; V</code>. Predictive
+skill and univariate separability are a different functional of the same
+model. A correctly specified slow-mean-reverting process simultaneously
+has well-defined structural parameters <em>and</em> a near-random-walk
+predictive distribution at horizons short relative to its half-life.
+Both are true at once.</li>
+<li><strong>The thesis <em>entails</em> the nulls.</strong> “Gravitation
+is slow” deductively implies: over a horizon much shorter than the
+half-life an OU is, to first order, a random walk (so the random walk is
+near-optimal and <code>kappa &gt; 0</code> vs <code>kappa = 0</code> are
+nearly identical – E1); its forecast variance saturates while the
+realized error grows (the long-horizon log-score gap – E1); and the
+augmented Dickey-Fuller power tends to its size as the root approaches
+unity (so univariate tests cannot separate the wedge – E3). Finding
+these signatures is <strong>corroboration</strong> of the <em>slow</em>
+form of the thesis, not an anomaly it survives.</li>
+<li><strong>The structural register identifies what the others
+cannot.</strong> The posterior uses the joint likelihood over the whole
+61 x 37 panel with hierarchical pooling – far more information than a
+single-series forecast or 37 separate ADF tests – and contracts on the
+median reversion speed where a univariate test cannot reject a unit
+root. This is information, not magic; its correct computation is
+certified by I1, I2 and the SBC.</li>
+<li><strong>Falsifiability.</strong> I2 shows that when the truth is
+null the pipeline reports the null (the value coupling covers 0; a
+random walk yields a ~50-year half-life). So “the evidence is
+structural” is <em>licensed by</em> the internal validation, not merely
+asserted: the pipeline finds gravitation and value anchoring only when
+they are present.</li>
+<li><strong>No spurious correlation.</strong> The wedge cancels the
+shared cost price <code>k = c + v</code> by construction, so the marxian
+content lives in <code>W</code>, not in the definitional level
+co-movement the critique targets; the claim is tested on
+<code>W</code>’s dynamics, in the posterior.</li>
+<li><strong>The honest bound.</strong> What is <em>not</em> claimed:
+predictive superiority, beating a random walk, univariate confirmation,
+or uniqueness. The existence of gravitation is an inferential
+(high-posterior-probability) conclusion under a validated model, not a
+deductive certainty – the low-<code>kappa</code> trap leaves the slow
+tail of the posterior near the unit root – and the reported 9-year
+half-life is, if anything, a conservatively slow estimate (I1b). A
+single mechanism – slow gravitation – simultaneously is the thesis,
+entails every external null, and survives in the validated structural
+register: the opposite of special pleading.</li>
+</ol>
+</div>
+<div id="references" class="section level2">
+<h2>References</h2>
+<ul>
+<li>Gelman (2006). Prior distributions for variance parameters in
+hierarchical models. <em>Bayesian Analysis</em>.</li>
+<li>Talts, Betancourt, Simpson, Vehtari &amp; Gelman (2018). Validating
+Bayesian inference algorithms with simulation-based calibration.
+<em>arXiv:1804.06788</em>.</li>
+<li>Rubin (1987). <em>Multiple Imputation for Nonresponse in
+Surveys</em>.</li>
+<li>Vehtari, Gelman &amp; Gabry (2017). Practical Bayesian model
+evaluation using leave-one-out cross-validation and WAIC. <em>Statistics
+and Computing</em>.</li>
+<li>Bürkner, Gabry &amp; Vehtari (2020). Approximate leave-future-out
+cross-validation for Bayesian time series models.</li>
+</ul>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
